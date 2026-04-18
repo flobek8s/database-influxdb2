@@ -1,0 +1,60 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ .Values.appname }}
+  namespace: {{ .Values.namespace }}
+spec:
+  serviceName: {{ .Values.appname }}
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{ .Values.appname }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.appname }}
+    spec:
+      containers:
+      - name: {{ .Values.appname }}
+        image: {{ .Values.image }}
+        ports:
+        - containerPort: 8086
+          name: http
+        env:
+        - name: DOCKER_INFLUXDB_INIT_MODE
+          value: "setup"
+        - name: DOCKER_INFLUXDB_INIT_USERNAME
+          value: "admin"
+        - name: DOCKER_INFLUXDB_INIT_PASSWORD
+          valueFrom:
+              secretKeyRef:
+                name: influxdb-secrets
+                key: admin-password
+        - name: DOCKER_INFLUXDB_INIT_ORG
+          value: "phink8s"
+        - name: DOCKER_INFLUXDB_INIT_RETENTION
+          value: "0"  # 0 = infinite retention
+        - name: DOCKER_INFLUXDB_INIT_ADMIN_TOKEN
+          valueFrom:
+              secretKeyRef:
+                name: influxdb-secrets
+                key: admin-token
+        volumeMounts:
+        - name: {{ .Values.volumnemountname }}
+          mountPath: /var/lib/influxdb2
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 8086
+          initialDelaySeconds: 30
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 8086
+          initialDelaySeconds: 5
+          periodSeconds: 5
+      volumes:
+      - name: {{ .Values.volumnemountname }}
+        persistentVolumeClaim:
+          claimName: {{ .Values.claimName }}

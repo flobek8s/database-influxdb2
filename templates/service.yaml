@@ -1,0 +1,28 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.appname }}
+  namespace: {{ .Values.namespace }}
+spec:
+  type: ClusterIP
+  ports:
+  - port: 8086
+    targetPort: 8086
+    name: http
+  selector:
+    app: {{ .Values.appname }}
+---
+# External access for Raspberry Pi
+apiVersion: v1
+kind: Service
+metadata:
+  name: influxdb2-external
+  namespace: {{ .Values.namespace }}
+spec:
+  type: NodePort
+  ports:
+  - port: 8086
+    targetPort: 8086
+    nodePort: 30086
+  selector:
+    app: {{ .Values.appname }}

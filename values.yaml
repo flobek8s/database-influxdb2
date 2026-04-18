@@ -1,0 +1,14 @@
+namespace: database
+appname: influxdb2
+image: influxdb:2.8.0
+
+storageClass: longhorn
+volumnemountname: influxdb-data
+claimName: influxdb-data
+storage: 2Gi
+
+hostname: influxdb.phink8s.com
+
+ingress:
+  className: traefik
+  tlsSecretName: wildcard-phink8s.com-tls
