@@ -32,6 +32,8 @@ spec:
                 key: admin-password
         - name: DOCKER_INFLUXDB_INIT_ORG
           value: "phink8s"
+        - name: DOCKER_INFLUXDB_INIT_BUCKET
+          value: "mylivetemps"
         - name: DOCKER_INFLUXDB_INIT_RETENTION
           value: "0"  # 0 = infinite retention
         - name: DOCKER_INFLUXDB_INIT_ADMIN_TOKEN
