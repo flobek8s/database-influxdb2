@@ -1,6 +1,6 @@
 namespace: database
 appname: influxdb2
-image: influxdb:2.8.0
+image: influxdb:2.9.1
 
 storageClass: longhorn
 volumnemountname: influxdb-data
